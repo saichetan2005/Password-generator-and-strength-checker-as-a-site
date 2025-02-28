@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker & Generator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+        }
+        .box {
+            background: white;
+            color: black;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+            display: none;
+        }
+        h1 {
+            color: #fff;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: 0.3s;
+        }
+        button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #ff4757;
+            transform: scale(1.05);
+        }
+        #strength {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .green { color: green; }
+        .orange { color: orange; }
+        .red { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Password Strength Checker & Generator</h1>
+    <div class="container">
+        <button onclick="showSection('checker')">Check Password Strength</button>
+        <button onclick="showSection('generator')">Generate Password</button>
+        
+        <div id="checker" class="box">
+            <h2>Check Password Strength</h2>
+            <input type="password" id="passwordInput" placeholder="Enter password">
+            <button onclick="checkPasswordStrength()">Check Strength</button>
+            <p id="strength">Password Strength: </p>
+        </div>
+        
+        <div id="generator" class="box">
+            <h2>Generate a Secure Password</h2>
+            <label>Password Length: <input type="number" id="length" value="12" min="4"></label><br>
+            <label><input type="checkbox" id="useUpper" checked> Include Uppercase Letters</label><br>
+            <label><input type="checkbox" id="useDigits" checked> Include Numbers</label><br>
+            <label><input type="checkbox" id="useSpecial" checked> Include Special Characters</label><br>
+            <button onclick="generatePassword()">Generate Password</button>
+            <input type="text" id="generatedPassword" readonly>
+        </div>
+    </div>
+    
+    <script>
+        function showSection(sectionId) {
+            document.getElementById("checker").style.display = "none";
+            document.getElementById("generator").style.display = "none";
+            document.getElementById(sectionId).style.display = "block";
+        }
+
+        function checkPasswordStrength() {
+            let password = document.getElementById("passwordInput").value;
+            let strengthText = "Weak";
+            let strongPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+            let moderatePattern = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+            
+            if (strongPattern.test(password)) {
+                strengthText = "Strong";
+                document.getElementById("strength").className = "green";
+            } else if (moderatePattern.test(password)) {
+                strengthText = "Moderate";
+                document.getElementById("strength").className = "orange";
+            } else {
+                document.getElementById("strength").className = "red";
+            }
+            document.getElementById("strength").innerText = "Password Strength: " + strengthText;
+        }
+
+        function generatePassword() {
+            let length = parseInt(document.getElementById("length").value) || 12;
+            let useUpper = document.getElementById("useUpper").checked;
+            let useDigits = document.getElementById("useDigits").checked;
+            let useSpecial = document.getElementById("useSpecial").checked;
+            
+            let characters = "abcdefghijklmnopqrstuvwxyz";
+            if (useUpper) characters += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (useDigits) characters += "0123456789";
+            if (useSpecial) characters += "!@#$%^&*()_+[]{};:,.<>?";
+            
+            if (characters.length === 0) {
+                alert("At least one character type must be selected!");
+                return;
+            }
+            
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                password += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            document.getElementById("generatedPassword").value = password;
+        }
+    </script>
+</body>
+</html>
